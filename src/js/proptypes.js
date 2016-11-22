@@ -33,7 +33,7 @@ function getIteratorFn(maybeIterable) {
 
 var ANONYMOUS = '<<anonymous>>';
 
-window.PropTypes = {
+var ReactPropTypes = {
   array: createPrimitiveTypeChecker('array'),
   bool: createPrimitiveTypeChecker('boolean'),
   func: createPrimitiveTypeChecker('function'),
@@ -309,3 +309,5 @@ function getClassName(propValue) {
   }
   return propValue.constructor.name;
 }
+
+module.exports = ReactPropTypes;

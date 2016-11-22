@@ -29,8 +29,19 @@
                            :source-map-timestamp true
                            :preloads [devtools.preload]
                            :language-in :ecmascript5
-                           :externs ["js/externs/react.js"
-                                     "js/externs/react-dom.js"]}}
+                           :language-out :ecmascript5
+                           :externs ["js/externs/preact.js"
+                                     "js/externs/react.js"
+                                     "js/externs/react-dom.js"]
+                           :foreign-libs [{:file "js/proptypes.js"
+                                           :provides ["proptypes.core"]
+                                           :module-type :commonjs}
+                                          {:file "js/preact.js"
+                                           :provides ["preact.core"]
+                                           :module-type :commonjs}
+                                          {:file "js/preact-compat.js"
+                                           :provides ["preact.compat"]
+                                           :module-type :commonjs}]}}
                {:id "min"
                 :source-paths ["src"]
                 :compiler {:output-to "resources/public/js/compiled/prum.js"
@@ -38,8 +49,19 @@
                            :optimizations :advanced
                            :pretty-print false
                            :language-in :ecmascript5
-                           :externs ["js/externs/react.js"
-                                     "js/externs/react-dom.js"]}}]}
+                           :language-out :ecmascript5
+                           :externs ["js/externs/preact.js"
+                                     "js/externs/react.js"
+                                     "js/externs/react-dom.js"]
+                           :foreign-libs [{:file "js/proptypes.js"
+                                           :provides ["proptypes.core"]
+                                           :module-type :commonjs}
+                                          {:file "js/preact.js"
+                                           :provides ["preact.core"]
+                                           :module-type :commonjs}
+                                          {:file "js/preact-compat.js"
+                                           :provides ["preact.compat"]
+                                           :module-type :commonjs}]}}]}
 
   :figwheel {:css-dirs ["resources/public/css"]}
 

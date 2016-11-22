@@ -1,1 +1,20 @@
-(ns cljsjs.react.dom)
+(ns cljsjs.react.dom
+  (:require [preact.compat :as p]))
+
+(set!
+ js/ReactDOM
+ #js {"version" p/version
+      "DOM" p/DOM
+      "PropTypes" p/PropTypes
+      "Children" p/Children
+      "render" p/render
+      "createClass" p/createClass
+      "createFactory" p/createFactory
+      "createElement" p/createElement
+      "cloneElement" p/cloneElement
+      "isValidElement" p/isValidElement
+      "findDOMNode" p/findDOMNode
+      "unmountComponentAtNode" p/unmountComponentAtNode
+      "Component" p/Component
+      "PureComponent" p/PureComponent
+      "unstable_renderSubtreeIntoContainer" p/unstable_renderSubtreeIntoContainer})

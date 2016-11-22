@@ -1,6 +1,5 @@
-'use strict';
-
-PropTypes = 'default' in PropTypes ? PropTypes['default'] : PropTypes;
+var PropTypes = require('./proptypes');
+var preact = require('./preact');
 
 var version = '15.1.0'; // trick libraries to think we are react
 
@@ -37,7 +36,7 @@ var EmptyComponent = function () { return null; };
 
 
 // make react think we're react.
-var VNode = h('').constructor;
+var VNode = preact.h('').constructor;
 VNode.prototype.$$typeof = REACT_ELEMENT_TYPE;
 VNode.prototype.preactCompatUpgraded = false;
 VNode.prototype.preactCompatNormalized = false;
@@ -55,7 +54,8 @@ Object.defineProperty(VNode.prototype, 'props', {
 });
 
 
-options.vnode = function (vnode) {
+var oldVnodeHook = preact.options.vnode;
+preact.options.vnode = function (vnode) {
 	if (!vnode.preactCompatUpgraded) {
 		vnode.preactCompatUpgraded = true;
 
@@ -76,6 +76,7 @@ options.vnode = function (vnode) {
 			handleElementVNode(vnode, attrs);
 		}
 	}
+	if (oldVnodeHook) oldVnodeHook(vnode);
 };
 
 
@@ -129,7 +130,7 @@ function render$1$1(vnode, parent, callback) {
 		}
 	}
 
-	var out = render(vnode, parent, prev);
+	var out = preact.render(vnode, parent, prev);
 	if (parent) parent._preactCompatRendered = out;
 	if (typeof callback==='function') callback();
 	return out && out._component || out.base;
@@ -146,7 +147,7 @@ ContextProvider.prototype.render = function render$1 (props) {
 };
 
 function renderSubtreeIntoContainer(parentComponent, vnode, container, callback) {
-	var wrap = h(ContextProvider, { context: parentComponent.context }, vnode);
+	var wrap = preact.h(ContextProvider, { context: parentComponent.context }, vnode);
 	var c = render$1$1(wrap, container);
 	if (callback) callback(c);
 	return c;
@@ -156,7 +157,7 @@ function renderSubtreeIntoContainer(parentComponent, vnode, container, callback)
 function unmountComponentAtNode(container) {
 	var existing = container._preactCompatRendered;
 	if (existing && existing.parentNode===container) {
-		render(h(EmptyComponent), container, existing);
+		preact.render(preact.h(EmptyComponent), container, existing);
 		return true;
 	}
 	return false;
@@ -259,7 +260,7 @@ function createElement() {
 	while ( len-- ) args[ len ] = arguments[ len ];
 
 	upgradeToVNodes(args, 2);
-	return normalizeVNode(h.apply(void 0, args));
+	return normalizeVNode(preact.h.apply(void 0, args));
 }
 
 
@@ -290,12 +291,12 @@ function cloneElement$1(element, props) {
 
 	if (!isValidElement(element)) return element;
 	var elementProps = element.attributes || element.props;
-	var node = h(
+	var node = preact.h(
 		element.nodeName || element.type,
 		elementProps,
 		element.children || elementProps && elementProps.children
 	);
-	return normalizeVNode(cloneElement.apply(void 0, [ node, props ].concat( children )));
+	return normalizeVNode(preact.cloneElement.apply(void 0, [ node, props ].concat( children )));
 }
 
 
@@ -513,7 +514,7 @@ function afterRender() {
 
 
 function Component$1(props, context, opts) {
-	Component.call(this, props, context);
+	preact.Component.call(this, props, context);
 	if (this.getInitialState) this.state = this.getInitialState();
 	this.refs = {};
 	this._refProxies = {};
@@ -521,7 +522,7 @@ function Component$1(props, context, opts) {
 		newComponentHook.call(this, props, context);
 	}
 }
-Component$1.prototype = new Component();
+Component$1.prototype = new preact.Component();
 extend(Component$1.prototype, {
 	constructor: Component$1,
 
@@ -557,10 +558,9 @@ PureComponent.prototype.shouldComponentUpdate = function(props, state) {
 	return shallowDiffers(this.props, props) || shallowDiffers(this.state, state);
 };
 
-options.debounceRendering = requestAnimationFrame;
-options.syncComponentUpdates = false;
 
-window.React = {
+
+module.exports = {
 	version: version,
 	DOM: DOM,
 	PropTypes: PropTypes,
@@ -575,8 +575,5 @@ window.React = {
 	unmountComponentAtNode: unmountComponentAtNode,
 	Component: Component$1,
 	PureComponent: PureComponent,
-	unstable_renderSubtreeIntoContainer: renderSubtreeIntoContainer,
-	unstable_batchedUpdates: (f, a) => requestAnimationFrame(() => f(a))
+	unstable_renderSubtreeIntoContainer: renderSubtreeIntoContainer
 };
-
-window.ReactDOM = React;
